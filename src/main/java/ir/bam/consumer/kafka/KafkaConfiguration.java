@@ -8,49 +8,79 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.config.KafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
+import org.springframework.beans.factory.annotation.Value;
 
 @Configuration
 @EnableKafka
+@Profile("${spring.profiles.active}")
 public class KafkaConfiguration {
 
-	@Bean
-	KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> kafkaListenerContainerFactory() {
-		ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
-		factory.setConsumerFactory(consumerFactory());
-		factory.setConcurrency(3);
-		factory.getContainerProperties().setPollTimeout(3000);
-		return factory;
-	}
+    @Value("kafka.bootstrapAddress")
+    private String kafkaBootstrapAddress;
 
-	@Bean
-	public ConsumerFactory<String, String> consumerFactory() {
-		return new DefaultKafkaConsumerFactory<>(consumerConfigs());
-	}
+    @Value("spring.kafka.consumer.enable-auto-commit")
+    private String kafkaConsumerEnableAutoCommit;
 
-	@Bean
-	public Map<String, Object> consumerConfigs() {
-		Map<String, Object> propsMap = new HashMap<>();
-		propsMap.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-		propsMap.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
-		propsMap.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "100");
-		propsMap.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "15000");
-		propsMap.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-		propsMap.put(ConsumerConfig.GROUP_ID_CONFIG, "bmi_audit1_consumer_group");
-		propsMap.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, "read_committed");
-		propsMap.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-		propsMap.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-		return propsMap;
-	}
+    @Value("spring.kafka.consumer.auto-commit-interval")
+    private String kafkaConsumerAutoCommitInterval;
 
-	@Bean
-	public Listener listener() {
-		return new Listener();
-	}
+    @Value("session.timeout.ms")
+    private Integer sessionTimeoutMs;
+
+    @Value("spring.kafka.consumer.auto-offset-reset")
+    private String kafkaConsumerAutoOffsetReset;
+
+    @Value("spring.kafka.consumer.group-id")
+    private String kafkaConsumerGroupId;
+
+    @Value("spring.kafka.consumer.isolation-level")
+    private String kafkaConsumerIsolationLevel;
+
+    @Value("spring.kafka.consumer.key-deserializer")
+    private String kafkaKeyDeserializer;
+
+    @Value("spring.kafka.consumer.value-deserializer")
+    private String kafkaValueDeserializer;
+
+    @Bean
+    KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactory());
+        factory.setConcurrency(3);
+        factory.getContainerProperties().setPollTimeout(3000);
+        return factory;
+    }
+
+    @Bean
+    public ConsumerFactory<String, String> consumerFactory() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfigs());
+    }
+
+    @Bean
+    public Map<String, Object> consumerConfigs() {
+        Map<String, Object> propsMap = new HashMap<>();
+        propsMap.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBootstrapAddress);
+        propsMap.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, kafkaConsumerEnableAutoCommit);
+        propsMap.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, kafkaConsumerAutoCommitInterval);
+//        propsMap.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, sessionTimeoutMs);
+        propsMap.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, kafkaConsumerAutoOffsetReset);
+        propsMap.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaConsumerGroupId);
+        propsMap.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, kafkaConsumerIsolationLevel);
+        propsMap.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, kafkaKeyDeserializer);
+        propsMap.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, kafkaValueDeserializer);
+        return propsMap;
+    }
+
+    @Bean
+    public Listener listener() {
+        return new Listener();
+    }
 
 }
