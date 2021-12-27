@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -19,34 +18,33 @@ import org.springframework.beans.factory.annotation.Value;
 
 @Configuration
 @EnableKafka
-@Profile("${spring.profiles.active}")
 public class KafkaConfiguration {
 
-    @Value("kafka.bootstrapAddress")
+    @Value("${kafka.bootstrapAddress}")
     private String kafkaBootstrapAddress;
 
-    @Value("spring.kafka.consumer.enable-auto-commit")
+    @Value("${spring.kafka.consumer.enable-auto-commit}")
     private String kafkaConsumerEnableAutoCommit;
 
-    @Value("spring.kafka.consumer.auto-commit-interval")
+    @Value("${spring.kafka.consumer.auto-commit-interval}")
     private String kafkaConsumerAutoCommitInterval;
 
-    @Value("session.timeout.ms")
+    @Value("${session.timeout.ms}")
     private Integer sessionTimeoutMs;
 
-    @Value("spring.kafka.consumer.auto-offset-reset")
+    @Value("${spring.kafka.consumer.auto-offset-reset}")
     private String kafkaConsumerAutoOffsetReset;
 
-    @Value("spring.kafka.consumer.group-id")
+    @Value("${spring.kafka.consumer.group-id}")
     private String kafkaConsumerGroupId;
 
-    @Value("spring.kafka.consumer.isolation-level")
+    @Value("${spring.kafka.consumer.isolation-level}")
     private String kafkaConsumerIsolationLevel;
 
-    @Value("spring.kafka.consumer.key-deserializer")
+    @Value("${spring.kafka.consumer.key-deserializer}")
     private String kafkaKeyDeserializer;
 
-    @Value("spring.kafka.consumer.value-deserializer")
+    @Value("${spring.kafka.consumer.value-deserializer}")
     private String kafkaValueDeserializer;
 
     @Bean
@@ -69,7 +67,7 @@ public class KafkaConfiguration {
         propsMap.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBootstrapAddress);
         propsMap.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, kafkaConsumerEnableAutoCommit);
         propsMap.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, kafkaConsumerAutoCommitInterval);
-//        propsMap.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, sessionTimeoutMs);
+        propsMap.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, sessionTimeoutMs);
         propsMap.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, kafkaConsumerAutoOffsetReset);
         propsMap.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaConsumerGroupId);
         propsMap.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, kafkaConsumerIsolationLevel);
