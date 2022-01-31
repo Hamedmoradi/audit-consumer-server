@@ -108,12 +108,6 @@
             <artifactId>json</artifactId>
             <version>20180130</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/pl.project13.maven/git-commit-id-plugin -->
-<!--        <dependency>-->
-<!--            <groupId>pl.project13.maven</groupId>-->
-<!--            <artifactId>git-commit-id-plugin</artifactId>-->
-<!--            <version>4.0.2</version>-->
-<!--        </dependency>-->
     </dependencies>
     <properties>
         <java.version>11</java.version>
@@ -157,6 +151,18 @@
                         </ports>
                     </container>
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <artifactId>lombok</artifactId>
+                            <groupId>org.projectlombok</groupId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+                <groupId>org.springframework.boot</groupId>
             </plugin>
         </plugins>
     </build>
