@@ -32,7 +32,7 @@ public class Listener {
     public CountDownLatch countDownLatch1 = new CountDownLatch(3);
     public CountDownLatch countDownLatch2 = new CountDownLatch(3);
 
-    @KafkaListener(id = "id0", topicPartitions = {@TopicPartition(topic = "bmi_audit", partitions = {"0"})})
+    @KafkaListener(id = "bmi_audit-0", topicPartitions = {@TopicPartition(topic = "bmi_audit", partitions = {"0"})})
     public void listenPartition0(ConsumerRecord<?, ?> record) {
 //        log.info("Listener Id0, Thread ID: " + Thread.currentThread().getId());
 //        log.info("Received: " + record);
@@ -42,7 +42,7 @@ public class Listener {
         countDownLatch0.countDown();
     }
 
-    @KafkaListener(id = "id1", topicPartitions = {@TopicPartition(topic = "bmi_audit", partitions = {"1"})})
+    @KafkaListener(id = "bmi_audit-1", topicPartitions = {@TopicPartition(topic = "bmi_audit", partitions = {"1"})})
     public void listenPartition1(ConsumerRecord<?, ?> record) {
 //        log.info("Listener Id1, Thread ID: " + Thread.currentThread().getId());
 //        log.info("Received: " + record);
@@ -52,7 +52,7 @@ public class Listener {
         countDownLatch1.countDown();
     }
 
-    @KafkaListener(id = "id2", topicPartitions = {@TopicPartition(topic = "bmi_audit", partitions = {"2"})})
+    @KafkaListener(id = "bmi_audit-2", topicPartitions = {@TopicPartition(topic = "bmi_audit", partitions = {"2"})})
     public void listenPartition2(ConsumerRecord<?, ?> record) {
 //        log.info("Listener Id2, Thread ID: " + Thread.currentThread().getId());
 //        log.info("Received: " + record);
