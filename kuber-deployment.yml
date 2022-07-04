@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: audit-consumer
+  labels:
+    app: audit-consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: audit-consumer
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: audit-consumer
+    spec:
+      containers:
+        - image: repo.sadad.co.ir/repository/baam-docker-registry/audit-consumer-server:0.0.2-SNAPSHOT
+          name: audit-consumer
+          args: ['application-prod.properties']
+          ports:
+            - containerPort: 8585
+      restartPolicy: Always
