@@ -18,7 +18,7 @@ import org.springframework.web.client.RestTemplate;
 public class Listener {
 
     @Value("${audit.server.request.url}")
-    private String requstUrl;
+    private String requestUrl;
 
     @Value("${audit.server.response.url}")
     private String responseUrl;
@@ -34,8 +34,7 @@ public class Listener {
 
     @KafkaListener(id = "bmi_audit-0", topicPartitions = {@TopicPartition(topic = "bmi_audit", partitions = {"0"})})
     public void listenPartition0(ConsumerRecord<?, ?> record) {
-//        log.info("Listener Id0, Thread ID: " + Thread.currentThread().getId());
-//        log.info("Received: " + record);
+        log.info("Listener Id0, Thread ID: " + Thread.currentThread().getId() + "  Received: " + record);
         String message = separateMessage((String) record.value());
         String token = getToken((String) record.value());
         saveRequest(message, token);
@@ -44,8 +43,7 @@ public class Listener {
 
     @KafkaListener(id = "bmi_audit-1", topicPartitions = {@TopicPartition(topic = "bmi_audit", partitions = {"1"})})
     public void listenPartition1(ConsumerRecord<?, ?> record) {
-//        log.info("Listener Id1, Thread ID: " + Thread.currentThread().getId());
-//        log.info("Received: " + record);
+        log.info("Listener Id1, Thread ID: " + Thread.currentThread().getId() + "  Received: " + record);
         String message = separateMessage((String) record.value());
         String token = getToken((String) record.value());
         saveResponse(message, token);
@@ -54,8 +52,7 @@ public class Listener {
 
     @KafkaListener(id = "bmi_audit-2", topicPartitions = {@TopicPartition(topic = "bmi_audit", partitions = {"2"})})
     public void listenPartition2(ConsumerRecord<?, ?> record) {
-//        log.info("Listener Id2, Thread ID: " + Thread.currentThread().getId());
-//        log.info("Received: " + record);
+        log.info("Listener Id2, Thread ID: " + Thread.currentThread().getId() + "  Received: " + record);
         String message = separateMessage((String) record.value());
         String token = getToken((String) record.value());
         saveMethodCall(message, token);
@@ -63,7 +60,7 @@ public class Listener {
     }
 
     private void saveRequest(String message, String token) {
-        auditApiCall(message, token, requstUrl);
+        auditApiCall(message, token, requestUrl);
     }
 
     private void saveResponse(String response, String token) {
@@ -76,11 +73,15 @@ public class Listener {
 
     private void auditApiCall(String message, String token, String url) {
         String body = message;
+        initiateHeader(token, url, body, restTemplate);
+    }
+
+    public static void initiateHeader(String token, String url, String body, RestTemplate restTemplate) {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<String>(body, headers);
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
+        restTemplate.exchange(url, HttpMethod.POST, request, String.class);
     }
 
     private String separateMessage(String json) {

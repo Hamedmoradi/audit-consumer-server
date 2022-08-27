@@ -1,5 +1,6 @@
 package ir.bam.consumer.api;
 
+import ir.bam.consumer.kafka.Listener;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -44,11 +45,7 @@ public class ConsumeWebService {
     }
 
     private void auditApiCall(String message, String token, String url) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(token);
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> request = new HttpEntity<String>(message, headers);
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
+        Listener.initiateHeader(token, url, message, restTemplate);
     }
 
     private String separateMessage(String json) {
