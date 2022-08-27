@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 @EnableKafka
 public class KafkaConfiguration {
 
-    @Value("${kafka.bootstrapAddress}")
+    @Value("${spring.kafka.bootstrap-servers}")
     private String kafkaBootstrapAddress;
 
     @Value("${spring.kafka.consumer.enable-auto-commit}")
