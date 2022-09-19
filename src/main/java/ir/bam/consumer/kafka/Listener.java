@@ -1,7 +1,5 @@
 package ir.bam.consumer.kafka;
 
-import java.util.concurrent.CountDownLatch;
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.json.JSONObject;
@@ -11,6 +9,8 @@ import org.springframework.http.*;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.TopicPartition;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.concurrent.CountDownLatch;
 
 
 @Slf4j
