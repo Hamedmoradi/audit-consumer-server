@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <artifactId>audit-consumer</artifactId>
+    <description>audit-consumer microservice for consume message from kafka</description>
+    <version>0.0.13-SNAPSHOT</version>
+    <groupId>ir.bmi.baam</groupId>
+    <modelVersion>4.0.0</modelVersion>
+    <name>audit-consumer</name>
 
     <parent>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -10,48 +17,52 @@
         <version>2.5.4</version>
     </parent>
 
-    <artifactId>audit-consumer</artifactId>
-    <description>audit-consumer microservice for consume message from kafka</description>
-    <version>0.0.12-SNAPSHOT</version>
-    <groupId>ir.bmi.baam</groupId>
-    <modelVersion>4.0.0</modelVersion>
-    <name>audit-consumer</name>
-    <packaging>jar</packaging>
-
     <properties>
+        <checkstyle-maven-plugin.version>3.1.1</checkstyle-maven-plugin.version>
         <java.version>11</java.version>
+        <junit-jupiter.version>5.2.0</junit-jupiter.version>
+        <mapstruct.version>1.4.2.Final</mapstruct.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <rest-assured.version>5.1.1</rest-assured.version>
         <spring-cloud.version>2020.0.3</spring-cloud.version>
-        <bmi-identity.version>1.2.0</bmi-identity.version>
-        <rest-assured.version>4.4.0</rest-assured.version>
         <testng.version>7.4.0</testng.version>
         <logback-appender.version>1.6</logback-appender.version>
         <logback-encoder.version>4.11</logback-encoder.version>
-        <spring-cloud.version>2020.0.3</spring-cloud.version>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <groupId>org.springframework.boot</groupId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-log4j2</artifactId>
+            <artifactId>spring-cloud-starter-circuitbreaker-reactor-resilience4j</artifactId>
+            <groupId>org.springframework.cloud</groupId>
         </dependency>
         <dependency>
             <groupId>com.lmax</groupId>
             <artifactId>disruptor</artifactId>
             <version>3.4.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.mockito</groupId>
+                    <artifactId>mockito-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.mockito</groupId>
+                    <artifactId>mockito-all</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.kafka</groupId>
@@ -91,7 +102,7 @@
         <dependency>
             <artifactId>lombok</artifactId>
             <groupId>org.projectlombok</groupId>
-            <version>1.18.22</version>
+            <version>${lombok.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -116,6 +127,122 @@
             <version>20180130</version>
         </dependency>
         <dependency>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <groupId>org.springframework.cloud</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>spring-cloud-starter-sleuth</artifactId>
+            <groupId>org.springframework.cloud</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>spring-cloud-sleuth-zipkin</artifactId>
+            <groupId>org.springframework.cloud</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+            <groupId>org.springframework.boot</groupId>
+        </dependency>
+        <dependency>
+            <groupId>de.codecentric</groupId>
+            <artifactId>spring-boot-admin-starter-client</artifactId>
+            <version>2.4.1</version>
+        </dependency>
+        <dependency>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <groupId>io.micrometer</groupId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+            <groupId>org.springframework.cloud</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
+            <groupId>org.springframework.cloud</groupId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <artifactId>archunit-junit5</artifactId>
+            <groupId>com.tngtech.archunit</groupId>
+            <scope>test</scope>
+            <version>0.15.0</version>
+        </dependency>
+        <dependency>
+            <artifactId>mapstruct</artifactId>
+            <groupId>org.mapstruct</groupId>
+            <version>${mapstruct.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>mapstruct-processor</artifactId>
+            <groupId>org.mapstruct</groupId>
+            <version>${mapstruct.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>hystrix-core</artifactId>
+            <groupId>com.netflix.hystrix</groupId>
+            <version>1.5.18</version>
+        </dependency>
+        <dependency>
+            <artifactId>testng</artifactId>
+            <groupId>org.testng</groupId>
+            <version>${testng.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>validation-api</artifactId>
+            <groupId>javax.validation</groupId>
+            <version>2.0.1.Final</version>
+        </dependency>
+        <dependency>
+            <artifactId>springfox-swagger2</artifactId>
+            <groupId>io.springfox</groupId>
+            <version>3.0.0</version>
+        </dependency>
+        <dependency>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <groupId>io.springfox</groupId>
+            <version>3.0.0</version>
+        </dependency>
+        <dependency>
+            <artifactId>springfox-bean-validators</artifactId>
+            <groupId>io.springfox</groupId>
+            <version>3.0.0</version>
+        </dependency>
+        <dependency>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <scope>test</scope>
+            <version>${junit-jupiter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+        <dependency>
+            <artifactId>json-simple</artifactId>
+            <groupId>com.googlecode.json-simple</groupId>
+            <version>1.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.11</version>
+        </dependency>
+        <dependency>
+            <groupId>com.internetitem</groupId>
+            <artifactId>logback-elasticsearch-appender</artifactId>
+            <version>1.6</version>
+        </dependency>
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>4.11</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-config</artifactId>
         </dependency>
@@ -135,18 +262,9 @@
             <version>3.1.4</version>
         </dependency>
         <dependency>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-            <groupId>org.springframework.boot</groupId>
-        </dependency>
-        <dependency>
-            <groupId>de.codecentric</groupId>
-            <artifactId>spring-boot-admin-starter-client</artifactId>
-            <version>2.4.1</version>
-        </dependency>
-        <dependency>
-            <artifactId>micrometer-registry-prometheus</artifactId>
-            <groupId>io.micrometer</groupId>
-            <scope>runtime</scope>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.5</version>
         </dependency>
     </dependencies>
     <dependencyManagement>
@@ -161,12 +279,17 @@
         </dependencies>
     </dependencyManagement>
     <build>
+        <finalName>audit-consumer</finalName>
         <plugins>
             <plugin>
-                <groupId>com.google.cloud.tools</groupId>
                 <artifactId>jib-maven-plugin</artifactId>
-                <version>3.1.4</version>
                 <configuration>
+                    <container>
+                        <ports>
+                            <port>8585</port>
+                            <port>8585</port>
+                        </ports>
+                    </container>
                     <to>
                         <image>repo.sadad.co.ir/repository/baam-docker-registry/audit-consumer-server</image>
                         <tags>
@@ -174,14 +297,21 @@
                             <tag>latest</tag>
                         </tags>
                     </to>
-                    <container>
-                        <creationTime>${maven.build.timestamp}</creationTime>
-                        <ports>
-                            <port>9092</port>
-                            <port>5006</port>
-                        </ports>
-                    </container>
                 </configuration>
+                <groupId>com.google.cloud.tools</groupId>
+                <version>3.1.4</version>
+            </plugin>
+            <plugin>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <artifactId>lombok</artifactId>
+                            <groupId>org.projectlombok</groupId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+                <groupId>org.springframework.boot</groupId>
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -212,6 +342,7 @@
                     <target>11</target>
                 </configuration>
                 <groupId>org.apache.maven.plugins</groupId>
+                <version>3.5.1</version>
             </plugin>
         </plugins>
     </build>
