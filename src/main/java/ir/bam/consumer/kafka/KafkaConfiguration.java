@@ -1,10 +1,10 @@
 package ir.bam.consumer.kafka;
 
 
-import java.util.HashMap;
-import java.util.Map;
-
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.kafka.ConcurrentKafkaListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
@@ -13,10 +13,15 @@ import org.springframework.kafka.config.KafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 @EnableKafka
+@EnableTransactionManagement
+@Slf4j
 public class KafkaConfiguration {
 
     @Value("${spring.kafka.bootstrap-servers}")
@@ -46,12 +51,22 @@ public class KafkaConfiguration {
     @Value("${spring.kafka.consumer.value-deserializer}")
     private String kafkaValueDeserializer;
 
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<?, ?> kafkaListenerContainerFactory(
+            ConcurrentKafkaListenerContainerFactoryConfigurer configurer, ConsumerFactory consumerFactory) {
+        ConcurrentKafkaListenerContainerFactory<Object, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        configurer.configure(factory, consumerFactory);
+        return factory;
+    }
+
     @Bean
     KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> kafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         factory.setConcurrency(3);
         factory.getContainerProperties().setPollTimeout(3000);
+//        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
         return factory;
     }
 
