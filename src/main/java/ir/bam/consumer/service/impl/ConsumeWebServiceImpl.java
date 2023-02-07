@@ -72,8 +72,12 @@ public class ConsumeWebServiceImpl implements ConsumeWebService {
         headers.setBearerAuth(token);
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<String>(message, headers);
-        restTemplate.exchange(url, HttpMethod.POST, request, String.class);
-        log.info(" url " + url + "   ****method    ");
+        try {
+            restTemplate.exchange(url, HttpMethod.POST, request, String.class);
+            log.info("sent to url " + url + "   ****method    ");
+        } catch (Exception exception) {
+            log.error(" error in call " + url + "   ****exception:    " + exception);
+        }
     }
 
 
