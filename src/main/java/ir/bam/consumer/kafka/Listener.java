@@ -8,7 +8,8 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.TopicPartition;
 
 import java.util.concurrent.CountDownLatch;
-
+import org.springframework.kafka.support.Acknowledgment;
+import org.springframework.kafka.support.KafkaHeaders;
 
 
 @ConfigurationProperties(prefix = "spring.kafka.template.default-topic")
@@ -24,19 +25,20 @@ public class Listener {
     public CountDownLatch countDownLatch2 = new CountDownLatch(300);
 
     @KafkaListener(id = "bmi_audit-0", topicPartitions = {@TopicPartition(topic = "bmi_audit", partitions = {"0"})})
-    public void listenPartition0(ConsumerRecord<?, ?> record) {
+    public void listenPartition0(ConsumerRecord<?, ?> record, Acknowledgment acknowledgment) {
         log.info("Listener Id0, Thread ID: " + Thread.currentThread().getId());
         log.info("Received: " + record);
-
+        acknowledgment.acknowledge();
         consumeWebService.sendMessageToLogServer(record.value().toString());
         countDownLatch0.countDown();
 
     }
 
     @KafkaListener(id = "bmi_audit-1", topicPartitions = {@TopicPartition(topic = "bmi_audit", partitions = {"1"})})
-    public void listenPartition1(ConsumerRecord<?, ?> record) {
+    public void listenPartition1(ConsumerRecord<?, ?> record, Acknowledgment acknowledgment) {
         log.info("Listener Id1, Thread ID: " + Thread.currentThread().getId());
         log.info("Received: " + record);
+        acknowledgment.acknowledge();
 
         consumeWebService.sendMessageToLogServer(record.value().toString());
         countDownLatch1.countDown();
@@ -48,9 +50,10 @@ public class Listener {
     }
 
     @KafkaListener(id = "bmi_audit-2", topicPartitions = {@TopicPartition(topic = "bmi_audit", partitions = {"2"})})
-    public void listenPartition2(ConsumerRecord<?, ?> record) {
+    public void listenPartition2(ConsumerRecord<?, ?> record, Acknowledgment acknowledgment) {
         log.info("Listener Id2, Thread ID: " + Thread.currentThread().getId());
         log.info("Received: " + record);
+        acknowledgment.acknowledge();
         consumeWebService.sendMessageToLogServer(record.value().toString());
         countDownLatch2.countDown();
 
