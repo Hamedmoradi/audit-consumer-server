@@ -1,0 +1,15 @@
+version: '3'
+services:
+  audit-consumer:
+    image: repo.sadad.co.ir/repository/baam-docker-registry/audit-consumer-server:latest
+    container_name: audit-consumer
+    restart: always
+    environment:
+      - "JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:6010"
+      - "SPRING_APPLICATION_NAME=auditConsumer"
+      - "SPRING_PROFILES_ACTIVE=dev"
+      - "SPRING_CLOUD_CONFIG_URL=http://192.168.53.58:9031"
+    ports:
+      - "8585:8585"
+    volumes:
+      - "/var/log/money-transfer/audit-consumer-server/:/var/log/audit-consumer-server/"
