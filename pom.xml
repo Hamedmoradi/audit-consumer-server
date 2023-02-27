@@ -5,7 +5,7 @@
 
     <artifactId>audit-consumer</artifactId>
     <description>audit-consumer microservice for consume message from kafka</description>
-    <version>0.0.13-SNAPSHOT</version>
+    <version>0.0.14-SNAPSHOT</version>
     <groupId>ir.bmi.baam</groupId>
     <modelVersion>4.0.0</modelVersion>
     <name>audit-consumer</name>
