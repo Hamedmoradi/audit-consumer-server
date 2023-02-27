@@ -1,62 +1,37 @@
 package ir.bam.consumer.kafka;
 
 import ir.bam.consumer.service.ConsumeWebService;
+import java.util.concurrent.CountDownLatch;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.annotation.TopicPartition;
+import org.springframework.stereotype.Service;
 
-import java.util.concurrent.CountDownLatch;
-import org.springframework.kafka.support.Acknowledgment;
-import org.springframework.kafka.support.KafkaHeaders;
-
-
-@ConfigurationProperties(prefix = "spring.kafka.template.default-topic")
+@Slf4j
+@RequiredArgsConstructor
+@Service
 public class Listener {
 
-    private static final org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(Listener.class);
+  @Value("${spring.kafka.template.default-topic}")
+  private String topicName;
+  @Value("${spring.kafka.consumer.group-id}")
+  private String groupId;
 
-    @Autowired
-    private ConsumeWebService consumeWebService;
+  @Autowired
+  private ConsumeWebService consumeWebService;
 
-    public CountDownLatch countDownLatch0 = new CountDownLatch(300);
-    public CountDownLatch countDownLatch1 = new CountDownLatch(300);
-    public CountDownLatch countDownLatch2 = new CountDownLatch(300);
+  public CountDownLatch countDownLatch = new CountDownLatch(300);
 
-    @KafkaListener(id = "bmi_audit-0", topicPartitions = {@TopicPartition(topic = "bmi_audit", partitions = {"0"})})
-    public void listenPartition0(ConsumerRecord<?, ?> record, Acknowledgment acknowledgment) {
-        log.info("Listener Id0, Thread ID: " + Thread.currentThread().getId());
-        log.info("Received: " + record);
-        acknowledgment.acknowledge();
-        consumeWebService.sendMessageToLogServer(record.value().toString());
-        countDownLatch0.countDown();
-
-    }
-
-    @KafkaListener(id = "bmi_audit-1", topicPartitions = {@TopicPartition(topic = "bmi_audit", partitions = {"1"})})
-    public void listenPartition1(ConsumerRecord<?, ?> record, Acknowledgment acknowledgment) {
-        log.info("Listener Id1, Thread ID: " + Thread.currentThread().getId());
-        log.info("Received: " + record);
-        acknowledgment.acknowledge();
-
-        consumeWebService.sendMessageToLogServer(record.value().toString());
-        countDownLatch1.countDown();
-//                Acknowledgment acknowledgment = record.getHeaders().get(KafkaHeaders.ACKNOWLEDGMENT, Acknowledgment.class);
-//        if (acknowledgment != null) {
-//            System.out.println("Acknowledgment provided");
-//            acknowledgment.acknowledge();
-//        }
-    }
-
-    @KafkaListener(id = "bmi_audit-2", topicPartitions = {@TopicPartition(topic = "bmi_audit", partitions = {"2"})})
-    public void listenPartition2(ConsumerRecord<?, ?> record, Acknowledgment acknowledgment) {
-        log.info("Listener Id2, Thread ID: " + Thread.currentThread().getId());
-        log.info("Received: " + record);
-        acknowledgment.acknowledge();
-        consumeWebService.sendMessageToLogServer(record.value().toString());
-        countDownLatch2.countDown();
-
-    }
+  @KafkaListener(topics = "${spring.kafka.template.default-topic}", groupId = "${spring.kafka.consumer.group-id}")
+  public void consume(ConsumerRecord<?, ?> record) {
+    log.info("Tópico: {}", topicName);
+    log.info("Listener Id2, Thread ID: " + Thread.currentThread().getId());
+    log.info("Received: " + record);
+    consumeWebService.sendMessageToLogServer(record.value().toString());
+    countDownLatch.countDown();
+  }
 
 }

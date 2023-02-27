@@ -66,7 +66,6 @@ public class KafkaConfiguration {
         factory.setConsumerFactory(consumerFactory());
         factory.setConcurrency(3);
         factory.getContainerProperties().setPollTimeout(3000);
-//        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
         return factory;
     }
 
@@ -88,11 +87,6 @@ public class KafkaConfiguration {
         propsMap.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, kafkaKeyDeserializer);
         propsMap.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, kafkaValueDeserializer);
         return propsMap;
-    }
-
-    @Bean
-    public Listener listener() {
-        return new Listener();
     }
 
 }

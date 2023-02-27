@@ -74,9 +74,9 @@ public class ConsumeWebServiceImpl implements ConsumeWebService {
         HttpEntity<String> request = new HttpEntity<String>(message, headers);
         try {
             restTemplate.exchange(url, HttpMethod.POST, request, String.class);
-            log.info("sent to url " + url + "   ****method    ");
+            log.info("sent to url " + url + "   **** to log server    ");
         } catch (Exception exception) {
-            log.error(" error in call " + url + "   ****exception:    " + exception);
+            log.error(" error in call " + url + "   **** exception:    " + exception);
         }
     }
 
