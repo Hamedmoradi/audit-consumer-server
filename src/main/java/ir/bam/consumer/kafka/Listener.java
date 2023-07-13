@@ -1,97 +1,37 @@
 package ir.bam.consumer.kafka;
 
+import ir.bam.consumer.service.ConsumeWebService;
 import java.util.concurrent.CountDownLatch;
-
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.http.*;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.annotation.TopicPartition;
-import org.springframework.web.client.RestTemplate;
-
+import org.springframework.stereotype.Service;
 
 @Slf4j
-@ConfigurationProperties(prefix = "spring.kafka.template.default-topic")
+@RequiredArgsConstructor
+@Service
 public class Listener {
 
-    @Value("${audit.server.request.url}")
-    private String requstUrl;
+  @Value("${spring.kafka.template.default-topic}")
+  private String topicName;
+  @Value("${spring.kafka.consumer.group-id}")
+  private String groupId;
 
-    @Value("${audit.server.response.url}")
-    private String responseUrl;
+  @Autowired
+  private ConsumeWebService consumeWebService;
 
-    @Value("${audit.server.methodCall.url}")
-    private String methodCallUrl;
+  public CountDownLatch countDownLatch = new CountDownLatch(300);
 
-    private final RestTemplate restTemplate = new RestTemplate();
+  @KafkaListener(topics = "${spring.kafka.template.default-topic}", groupId = "${spring.kafka.consumer.group-id}")
+  public void consume(ConsumerRecord<?, ?> record) {
+    log.info("Tópico: {}", topicName);
+    log.info("Listener Id2, Thread ID: " + Thread.currentThread().getId());
+    log.info("Received: " + record);
+    consumeWebService.sendMessageToLogServer(record.value().toString());
+    countDownLatch.countDown();
+  }
 
-    public CountDownLatch countDownLatch0 = new CountDownLatch(3);
-    public CountDownLatch countDownLatch1 = new CountDownLatch(3);
-    public CountDownLatch countDownLatch2 = new CountDownLatch(3);
-
-    @KafkaListener(id = "id0", topicPartitions = {@TopicPartition(topic = "bmi_audit", partitions = {"0"})})
-    public void listenPartition0(ConsumerRecord<?, ?> record) {
-//        log.info("Listener Id0, Thread ID: " + Thread.currentThread().getId());
-//        log.info("Received: " + record);
-        String message = separateMessage((String) record.value());
-        String token = getToken((String) record.value());
-        saveRequest(message, token);
-        countDownLatch0.countDown();
-    }
-
-    @KafkaListener(id = "id1", topicPartitions = {@TopicPartition(topic = "bmi_audit", partitions = {"1"})})
-    public void listenPartition1(ConsumerRecord<?, ?> record) {
-//        log.info("Listener Id1, Thread ID: " + Thread.currentThread().getId());
-//        log.info("Received: " + record);
-        String message = separateMessage((String) record.value());
-        String token = getToken((String) record.value());
-        saveResponse(message, token);
-        countDownLatch1.countDown();
-    }
-
-    @KafkaListener(id = "id2", topicPartitions = {@TopicPartition(topic = "bmi_audit", partitions = {"2"})})
-    public void listenPartition2(ConsumerRecord<?, ?> record) {
-//        log.info("Listener Id2, Thread ID: " + Thread.currentThread().getId());
-//        log.info("Received: " + record);
-        String message = separateMessage((String) record.value());
-        String token = getToken((String) record.value());
-        saveMethodCall(message, token);
-        countDownLatch2.countDown();
-    }
-
-    private void saveRequest(String message, String token) {
-        auditApiCall(message, token, requstUrl);
-    }
-
-    private void saveResponse(String response, String token) {
-        auditApiCall(response, token, responseUrl);
-    }
-
-    private void saveMethodCall(String response, String token) {
-        auditApiCall(response, token, methodCallUrl);
-    }
-
-    private void auditApiCall(String message, String token, String url) {
-        String body = message;
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(token);
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> request = new HttpEntity<String>(body, headers);
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
-    }
-
-    private String separateMessage(String json) {
-        JSONObject jObject = new JSONObject(json);
-        JSONObject messagePart = jObject.getJSONObject("message");
-        return String.valueOf(messagePart);
-    }
-
-    private String getToken(String json) {
-        JSONObject jObject = new JSONObject(json);
-        String tokenPart = jObject.get("token").toString();
-        return tokenPart;
-    }
 }

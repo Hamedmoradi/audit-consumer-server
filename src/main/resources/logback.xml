@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration>
+
+<configuration scan="true" debug="true">
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+    <appender name="logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <param name="Encoding" value="UTF-8"/>
+        <remoteHost>172.29.140.3</remoteHost>
+        <port>5044</port>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+        </encoder>
+    </appender>
+
+    <root>
+        <appender-ref ref="logstash"/>
+    </root>
+
+</configuration>
