@@ -17,7 +17,7 @@ spec:
         app: audit-consumer
     spec:
       containers:
-        - image: repo.sadad.co.ir/repository/baam-docker-registry/audit-consumer-server:0.0.2-SNAPSHOT
+        - image: audit-consumer-server:0.0.2-SNAPSHOT
           name: audit-consumer
           args: ['application-prod.properties']
           ports:

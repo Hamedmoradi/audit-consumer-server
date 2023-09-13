@@ -1,4 +1,4 @@
-package ir.bam.consumer.service;
+package audit.consumer.service;
 
 public interface ConsumeWebService {
 

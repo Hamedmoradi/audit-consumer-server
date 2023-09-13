@@ -1,6 +1,6 @@
-package ir.bam.consumer.controller;
+package audit.consumer.controller;
 
-import ir.bam.consumer.service.ConsumeWebService;
+import audit.consumer.service.ConsumeWebService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

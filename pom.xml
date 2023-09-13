@@ -6,7 +6,7 @@
     <artifactId>audit-consumer</artifactId>
     <description>audit-consumer microservice for consume message from kafka</description>
     <version>0.0.14-SNAPSHOT</version>
-    <groupId>ir.bmi.baam</groupId>
+    <groupId>audit.consumer.service</groupId>
     <modelVersion>4.0.0</modelVersion>
     <name>audit-consumer</name>
 
@@ -291,7 +291,7 @@
                         </ports>
                     </container>
                     <to>
-                        <image>repo.sadad.co.ir/repository/baam-docker-registry/audit-consumer-server</image>
+                        <image>audit-consumer-server</image>
                         <tags>
                             <tag>${project.version}</tag>
                             <tag>latest</tag>
@@ -346,21 +346,4 @@
             </plugin>
         </plugins>
     </build>
-    <distributionManagement>
-        <repository>
-            <id>groups-public</id>
-            <name>Nexus Releases</name>
-            <url>https://repo.sadad.co.ir/repository/baam-maven-releases/</url>
-        </repository>
-        <site>
-            <id>groups-public</id>
-            <name>Nexus Sites</name>
-            <url>https://repo.sadad.co.ir/repository/baam-maven-group/</url>
-        </site>
-        <snapshotRepository>
-            <id>groups-public</id>
-            <name>Nexus Snapshot</name>
-            <url>https://repo.sadad.co.ir/repository/baam-maven-snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
 </project>

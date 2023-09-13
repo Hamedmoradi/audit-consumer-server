@@ -1,7 +1,7 @@
 version: '3'
 services:
   audit-consumer:
-    image: repo.sadad.co.ir/repository/baam-docker-registry/audit-consumer-server:latest
+    image: audit-consumer-server:latest
     container_name: audit-consumer
     restart: always
     environment:

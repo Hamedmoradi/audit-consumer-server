@@ -1,6 +1,6 @@
-package ir.bam.consumer.service.impl;
+package audit.consumer.service.impl;
 
-import ir.bam.consumer.service.ConsumeWebService;
+import audit.consumer.service.ConsumeWebService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -11,7 +11,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import static ir.bam.consumer.enumeration.MessageTypeEnum.*;
+import static audit.consumer.enumeration.MessageTypeEnum.*;
 
 @Service
 @Async

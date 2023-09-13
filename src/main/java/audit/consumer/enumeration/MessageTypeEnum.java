@@ -1,4 +1,4 @@
-package ir.bam.consumer.enumeration;
+package audit.consumer.enumeration;
 
 public enum MessageTypeEnum {
     METHOD_CALL("auditMethodCall"),

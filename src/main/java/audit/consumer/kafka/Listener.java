@@ -1,6 +1,6 @@
-package ir.bam.consumer.kafka;
+package audit.consumer.kafka;
 
-import ir.bam.consumer.service.ConsumeWebService;
+import audit.consumer.service.ConsumeWebService;
 import java.util.concurrent.CountDownLatch;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
